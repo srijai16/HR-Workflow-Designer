@@ -59,27 +59,27 @@ function CanvasInner() {
     e.dataTransfer.dropEffect = "move";
   }, []);
 
-  const exportWorkflow = () => {
-  const data = {
-    nodes: wf.nodes,
-    edges: wf.edges,
-    exportedAt: new Date().toISOString(),
+    const exportWorkflow = () => {
+    const data = {
+      nodes: wf.nodes,
+      edges: wf.edges,
+      exportedAt: new Date().toISOString(),
+    };
+
+    const blob = new Blob(
+      [JSON.stringify(data, null, 2)],
+      { type: "application/json" }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "workflow.json";
+    a.click();
+
+    URL.revokeObjectURL(url);
   };
-
-  const blob = new Blob(
-    [JSON.stringify(data, null, 2)],
-    { type: "application/json" }
-  );
-
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "workflow.json";
-  a.click();
-
-  URL.revokeObjectURL(url);
-};
 
  return (
   <div className="flex h-screen w-screen flex-col overflow-hidden bg-background">
@@ -167,49 +167,49 @@ function CanvasInner() {
 
         {/* Bottom Run Button */}
        <div className="border-t bg-card px-4 py-3 shrink-0">
-  <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center justify-between gap-4">
 
-    {/* Left Text */}
-    <div>
-      <div className="text-sm font-bold">
-        Test Sandbox
+          {/* Left Text */}
+          <div>
+            <div className="text-sm font-bold">
+              Test Sandbox
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Validate & simulate workflow execution
+            </div>
+          </div>
+
+          {/* Right Buttons */}
+          <div className="flex items-center gap-2">
+
+            {/* Node Panel */}
+            <button
+              onClick={() => setRightPanel("config")}
+              className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
+            >
+              Node Panel
+            </button>
+
+            {/* Export JSON */}
+            <button
+              onClick={exportWorkflow}
+              className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
+            >
+              Export JSON
+            </button>
+
+            {/* Run Simulation */}
+            <button
+              onClick={() => setRightPanel("sandbox")}
+              className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+            >
+              <Play className="h-4 w-4 mr-2" />
+              Run Simulation
+            </button>
+
+          </div>
+        </div>
       </div>
-      <div className="text-xs text-muted-foreground">
-        Validate & simulate workflow execution
-      </div>
-    </div>
-
-    {/* Right Buttons */}
-    <div className="flex items-center gap-2">
-
-      {/* Node Panel */}
-      <button
-        onClick={() => setRightPanel("config")}
-        className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
-      >
-        Node Panel
-      </button>
-
-      {/* Export JSON */}
-      <button
-        onClick={exportWorkflow}
-        className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
-      >
-        Export JSON
-      </button>
-
-      {/* Run Simulation */}
-      <button
-        onClick={() => setRightPanel("sandbox")}
-        className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
-      >
-        <Play className="h-4 w-4 mr-2" />
-        Run Simulation
-      </button>
-
-    </div>
-  </div>
-</div>
       </main>
 
       {/* Right Sidebar */}
