@@ -18,29 +18,62 @@ export function BaseNode({ kind, data, selected, subtitle }: BaseProps) {
   const s = KIND_STYLES[kind];
   const label = (data as { label?: string })?.label ?? kind;
   return (
-    <div
-      className="rounded-xl border-2 bg-card shadow-md min-w-[180px] transition-all"
+      <div
+      className="rounded-lg border bg-card shadow-sm min-w-[120px] transition-all"
       style={{
         borderColor: selected ? s.color : "var(--border)",
-        boxShadow: selected ? `0 0 0 3px color-mix(in oklab, ${s.color} 30%, transparent)` : undefined,
+        boxShadow: selected
+          ? `0 0 0 2px color-mix(in oklab, ${s.color} 28%, transparent)`
+          : undefined,
       }}
     >
       {kind !== "start" && (
-        <Handle type="target" position={Position.Top} style={{ background: s.color, width: 10, height: 10 }} />
+        <Handle
+          type="target"
+          position={Position.Top}
+          style={{
+            background: s.color,
+            width: 8,
+            height: 8,
+          }}
+        />
       )}
+
+      {/* Header */}
       <div
-        className="px-3 py-1.5 rounded-t-[10px] flex items-center gap-2 text-xs font-semibold uppercase tracking-wide"
-        style={{ background: s.color, color: "white" }}
+        className="px-2.5 py-1 rounded-t-lg flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide"
+        style={{
+          background: s.color,
+          color: "white",
+        }}
       >
-        <span>{s.icon}</span>
+        <span className="text-xs">{s.icon}</span>
         <span>{kind}</span>
       </div>
-      <div className="px-3 py-2">
-        <div className="text-sm font-semibold text-foreground truncate">{label}</div>
-        {subtitle && <div className="text-xs text-muted-foreground mt-0.5 truncate">{subtitle}</div>}
+
+      {/* Body */}
+      <div className="px-2.5 py-2">
+        <div className="text-xs font-semibold text-foreground truncate">
+          {label}
+        </div>
+
+        {subtitle && (
+          <div className="text-[10px] text-muted-foreground mt-0.5 truncate">
+            {subtitle}
+          </div>
+        )}
       </div>
+
       {kind !== "end" && (
-        <Handle type="source" position={Position.Bottom} style={{ background: s.color, width: 10, height: 10 }} />
+        <Handle
+          type="source"
+          position={Position.Bottom}
+          style={{
+            background: s.color,
+            width: 8,
+            height: 8,
+          }}
+        />
       )}
     </div>
   );
