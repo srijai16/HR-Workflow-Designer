@@ -59,6 +59,28 @@ function CanvasInner() {
     e.dataTransfer.dropEffect = "move";
   }, []);
 
+  const exportWorkflow = () => {
+  const data = {
+    nodes: wf.nodes,
+    edges: wf.edges,
+    exportedAt: new Date().toISOString(),
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(data, null, 2)],
+    { type: "application/json" }
+  );
+
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "workflow.json";
+  a.click();
+
+  URL.revokeObjectURL(url);
+};
+
  return (
   <div className="flex h-screen w-screen flex-col overflow-hidden bg-background">
     {/* Header */}
@@ -89,137 +111,147 @@ function CanvasInner() {
       <main className="flex flex-1 flex-col min-w-0">
 
         {/* Canvas */}
-<div
-  ref={wrapperRef}
-  className="flex-1 relative"
-  style={{ background: "var(--canvas-bg)" }}
-  onDrop={onDrop}
-  onDragOver={onDragOver}
->
-  <ReactFlow
-    nodes={wf.nodes}
-    edges={wf.edges}
-    onNodesChange={wf.onNodesChange}
-    onEdgesChange={wf.onEdgesChange}
-    onConnect={wf.onConnect}
-    onNodeClick={(_, node) => {
-      wf.setSelectedId(node.id);
-      setRightPanel("config");
-    }}
-    onPaneClick={() => {
-      wf.setSelectedId(null);
-      setRightPanel("config");
-    }}
-    onInit={(instance) => (rfRef.current = instance)}
-    nodeTypes={nodeTypes}
-    fitView
-    minZoom={0.4}
-    maxZoom={1.5}
-    defaultViewport={{ x: 0, y: 0, zoom: 0.75 }}
-    deleteKeyCode={["Backspace", "Delete"]}
-  >
-    {/* Smaller Grid */}
-    <Background gap={14} size={1} />
+      <div
+        ref={wrapperRef}
+        className="flex-1 relative"
+        style={{ background: "var(--canvas-bg)" }}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
+      >
+        <ReactFlow
+          nodes={wf.nodes}
+          edges={wf.edges}
+          onNodesChange={wf.onNodesChange}
+          onEdgesChange={wf.onEdgesChange}
+          onConnect={wf.onConnect}
+          onNodeClick={(_, node) => {
+            wf.setSelectedId(node.id);
+            setRightPanel("config");
+          }}
+          onPaneClick={() => {
+            wf.setSelectedId(null);
+            setRightPanel("config");
+          }}
+          onInit={(instance) => (rfRef.current = instance)}
+          nodeTypes={nodeTypes}
+          fitView
+          minZoom={0.4}
+          maxZoom={1.5}
+          defaultViewport={{ x: 0, y: 0, zoom: 0.75 }}
+          deleteKeyCode={["Backspace", "Delete"]}
+        >
+          {/* Smaller Grid */}
+          <Background gap={14} size={1} />
 
-    {/* Smaller Controls */}
-    <Controls
-      style={{
-        transform: "scale(0.85)",
-        transformOrigin: "bottom left",
-      }}
-    />
+          {/* Smaller Controls */}
+          <Controls
+            style={{
+              transform: "scale(0.85)",
+              transformOrigin: "bottom left",
+            }}
+          />
 
-    {/* Smaller MiniMap */}
-    <MiniMap
-      pannable
-      zoomable
-      style={{
-        width: 160,
-        height: 120,
-      }}
-      nodeStrokeWidth={2}
-     
-    />
-  </ReactFlow>
-</div>
+          {/* Smaller MiniMap */}
+          <MiniMap
+            pannable
+            zoomable
+            style={{
+              width: 160,
+              height: 120,
+            }}
+            nodeStrokeWidth={2}
+          
+          />
+        </ReactFlow>
+      </div>
 
         {/* Bottom Run Button */}
        <div className="border-t bg-card px-4 py-3 shrink-0">
-        <div className="flex items-center justify-between gap-4">
+  <div className="flex items-center justify-between gap-4">
 
-          {/* Left Text */}
-          <div>
-            <div className="text-sm font-bold">
-              Test Sandbox
-            </div>
-            <div className="text-xs text-muted-foreground">
-              Validate & simulate workflow execution
-            </div>
-          </div>
-
-          {/* Right Buttons */}
-          <div className="flex items-center gap-2">
-
-            <button
-              onClick={() => setRightPanel("config")}
-              className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
-            >
-              Add Node Panel
-            </button>
-
-            <button
-              onClick={() => setRightPanel("sandbox")}
-              className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
-            >
-              <Play className="h-4 w-4 mr-2" />
-              Run Simulation
-            </button>
-
-          </div>
-        </div>
+    {/* Left Text */}
+    <div>
+      <div className="text-sm font-bold">
+        Test Sandbox
       </div>
+      <div className="text-xs text-muted-foreground">
+        Validate & simulate workflow execution
+      </div>
+    </div>
+
+    {/* Right Buttons */}
+    <div className="flex items-center gap-2">
+
+      {/* Node Panel */}
+      <button
+        onClick={() => setRightPanel("config")}
+        className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
+      >
+        Node Panel
+      </button>
+
+      {/* Export JSON */}
+      <button
+        onClick={exportWorkflow}
+        className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
+      >
+        Export JSON
+      </button>
+
+      {/* Run Simulation */}
+      <button
+        onClick={() => setRightPanel("sandbox")}
+        className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+      >
+        <Play className="h-4 w-4 mr-2" />
+        Run Simulation
+      </button>
+
+    </div>
+  </div>
+</div>
       </main>
 
       {/* Right Sidebar */}
-      <aside className="w-80 border-l bg-card overflow-hidden">
-      {rightPanel === "sandbox" ? (
-        <SandboxPanel
-          ref={sandboxRef}
-          nodes={wf.nodes}
-          edges={wf.edges}
-          onClose={() => setRightPanel("config")}
-        />
-      ) : (
-        <NodeConfigPanel
-          node={wf.selectedNode}
-          onChange={wf.updateNodeData}
-          onDelete={wf.deleteSelected}
-        />
-      )}
+
+    <aside className="w-80 border-l bg-card relative shrink-0">
+
+      {/* Content Area */}
+      <div className="h-full overflow-y-auto pb-10">
+          {rightPanel === "sandbox" ? (
+            <SandboxPanel
+              ref={sandboxRef}
+              nodes={wf.nodes}
+              edges={wf.edges}
+              onClose={() => setRightPanel("config")}
+            />
+          ) : (
+            <NodeConfigPanel
+              node={wf.selectedNode}
+              onChange={wf.updateNodeData}
+              onDelete={wf.deleteSelected}
+            />
+          )}
+        </div>
+
+        {/* Absolute Bottom Footer */}
+        <div className="absolute bottom-0 left-0 right-0 border-t bg-card px-3 py-2 text-[11px] text-right text-muted-foreground">
+          Created by{" "}
+          <a
+            href="https://drive.google.com/file/d/1Vg-b0j5AfaSniIN49GrJMhM4qyNuOaJl/view?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-foreground hover:underline"
+          >
+            Srijai
+          </a>
+        </div>
+
     </aside>
 
-    </div>
-    <footer className="border-t bg-card px-4 py-2 shrink-0">
-    <div className="flex items-center justify-between text-xs text-muted-foreground">
-      
-      <div>
-        © {new Date().getFullYear()} Workflow Designer
-      </div>
-
-      <div className="font-medium">
-      Created by{" "}
-      <a
-        href="https://drive.google.com/file/d/1Vg-b0j5AfaSniIN49GrJMhM4qyNuOaJl/view?usp=sharing"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-foreground font-semibold hover:underline cursor-pointer"
-      >
-        Srijai
-      </a>
-    </div>
 
     </div>
-  </footer>
+    
   </div>
 );
 }
