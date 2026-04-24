@@ -1,5 +1,5 @@
 # HR Workflow Designer
-[![Live Demo](https://img.shields.io/badge/Live-Demo-success?logo=vercel)](https://hr-workflow-designer-lyart.vercel.app/)
+
 
 ## 🌐 Live Demo
 https://hr-workflow-designer-lyart.vercel.app/
@@ -7,9 +7,9 @@ https://hr-workflow-designer-lyart.vercel.app/
 A mini HR Workflow Designer built with **React + TypeScript + React Flow** that allows HR administrators to visually create, configure, validate, and simulate internal workflows such as onboarding, leave approvals, and document verification.
 
 ## Stack
-![React](https://img.shields.io/badge/React-19-blue?logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-blue?logo=typescript)
-![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel)
+- **React 19 + TypeScript** on TanStack Start (Vite)
+- **React Flow (`reactflow`)** for the canvas
+- **shadcn/ui + Tailwind v4** for UI primitives & design tokens
 
 ## ▶ How to Run
 
@@ -17,7 +17,6 @@ A mini HR Workflow Designer built with **React + TypeScript + React Flow** that 
 npm install
 npm run dev
 ```
-
 ## Features
 - Drag-and-drop workflow canvas
 - Multiple custom node types
