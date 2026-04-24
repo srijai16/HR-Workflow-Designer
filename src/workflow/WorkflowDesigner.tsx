@@ -8,6 +8,7 @@ import ReactFlow, {
   type ReactFlowInstance,
 } from "reactflow";
 import "reactflow/dist/style.css";
+
 import { useWorkflow } from "@/workflow/useWorkflow";
 import { nodeTypes } from "@/workflow/nodes/CustomNodes";
 import { NodePalette } from "@/workflow/NodePalette";
@@ -24,12 +25,21 @@ function CanvasInner() {
   const onDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
-      const kind = e.dataTransfer.getData("application/reactflow") as NodeKind;
+
+      const kind = e.dataTransfer.getData(
+        "application/reactflow"
+      ) as NodeKind;
+
       if (!kind) return;
-      const position = screenToFlowPosition({ x: e.clientX, y: e.clientY });
+
+      const position = screenToFlowPosition({
+        x: e.clientX,
+        y: e.clientY,
+      });
+
       wf.addNode(kind, position);
     },
-    [screenToFlowPosition, wf],
+    [screenToFlowPosition, wf]
   );
 
   const onDragOver = useCallback((e: React.DragEvent) => {
@@ -38,26 +48,36 @@ function CanvasInner() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen bg-background">
-      <header className="border-b bg-card px-4 py-2.5 flex items-center justify-between">
+    <div className="flex h-screen w-screen flex-col bg-background overflow-hidden">
+      {/* Header */}
+      <header className="border-b bg-card px-4 py-2.5 flex items-center justify-between shrink-0">
         <div>
-          <h1 className="text-base font-bold text-foreground">HR Workflow Designer</h1>
+          <h1 className="text-base font-bold text-foreground">
+            HR Workflow Designer
+          </h1>
           <p className="text-xs text-muted-foreground">
-            Visually design onboarding, leave approval &amp; verification flows
+            Visually design onboarding, leave approval & verification flows
           </p>
         </div>
+
         <div className="text-xs text-muted-foreground">
           {wf.nodes.length} nodes · {wf.edges.length} edges
         </div>
       </header>
-      <div className="flex flex-1 overflow-hidden">
-        <aside className="w-60 border-r bg-card overflow-y-auto">
+
+      {/* Body */}
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        {/* Left Sidebar */}
+        <aside className="w-60 border-r bg-card overflow-y-auto shrink-0">
           <NodePalette />
         </aside>
-        <main className="flex-1 flex flex-col">
+
+        {/* Center */}
+        <main className="flex flex-1 flex-col min-h-0">
+          {/* React Flow Canvas */}
           <div
             ref={wrapperRef}
-            className="flex-1 relative"
+            className="relative flex-1 min-h-0 w-full"
             style={{ background: "var(--canvas-bg)" }}
             onDrop={onDrop}
             onDragOver={onDragOver}
@@ -68,9 +88,9 @@ function CanvasInner() {
               onNodesChange={wf.onNodesChange}
               onEdgesChange={wf.onEdgesChange}
               onConnect={wf.onConnect}
-              onNodeClick={(_, n) => wf.setSelectedId(n.id)}
+              onNodeClick={(_, node) => wf.setSelectedId(node.id)}
               onPaneClick={() => wf.setSelectedId(null)}
-              onInit={(i) => (rfRef.current = i)}
+              onInit={(instance) => (rfRef.current = instance)}
               nodeTypes={nodeTypes}
               fitView
               deleteKeyCode={["Backspace", "Delete"]}
@@ -80,9 +100,15 @@ function CanvasInner() {
               <MiniMap pannable zoomable />
             </ReactFlow>
           </div>
-          <SandboxPanel nodes={wf.nodes} edges={wf.edges} />
+
+          {/* Bottom Panel */}
+          <div className="h-56 border-t bg-card shrink-0 overflow-auto">
+            <SandboxPanel nodes={wf.nodes} edges={wf.edges} />
+          </div>
         </main>
-        <aside className="w-80 border-l bg-card">
+
+        {/* Right Sidebar */}
+        <aside className="w-80 border-l bg-card shrink-0 overflow-y-auto">
           <NodeConfigPanel
             node={wf.selectedNode}
             onChange={wf.updateNodeData}
